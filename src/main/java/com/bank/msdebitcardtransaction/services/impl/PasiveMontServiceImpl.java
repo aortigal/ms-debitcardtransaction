@@ -1,8 +1,8 @@
 package com.bank.msdebitcardtransaction.services.impl;
 
-import com.bank.msdebitcardtransaction.models.utils.PasiveMont;
-import com.bank.msdebitcardtransaction.models.utils.ResponsePasiveMont;
-import com.bank.msdebitcardtransaction.services.PasiveMontService;
+import com.bank.msdebitcardtransaction.models.utils.PasiveAmount;
+import com.bank.msdebitcardtransaction.models.utils.ResponsePasiveAmount;
+import com.bank.msdebitcardtransaction.services.PasiveAmountService;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,38 +18,38 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class PasiveMontServiceImpl implements PasiveMontService {
+public class PasiveAmountServiceImpl implements PasiveAmountService {
 
     private final WebClient webClient;
 
-    private static final Logger log = LoggerFactory.getLogger(PasiveMontServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(PasiveAmountServiceImpl.class);
 
-    public PasiveMontServiceImpl(WebClient.Builder webClientBuilder){
+    public PasiveAmountServiceImpl(WebClient.Builder webClientBuilder){
         this.webClient = webClientBuilder.baseUrl("http://localhost:8082").build();
     }
 
     @Override
-    public Mono<ResponsePasiveMont> findPasiveMont(String id) {
+    public Mono<ResponsePasiveAmount> findPasiveAmount(String id) {
         return webClient.get()
-                .uri("/api/pasive/mont/" + id)
+                .uri("/api/pasive/amount/" + id)
                 .retrieve()
-                .bodyToMono(ResponsePasiveMont.class);
+                .bodyToMono(ResponsePasiveAmount.class);
     }
 
     @Override
-    public Flux<PasiveMont> listPasiveMont(List<String> accounts) {
+    public Flux<PasiveAmount> listPasiveAmount(List<String> accounts) {
         log.info("INI listado");
-        List<PasiveMont> pasiveMontListFlux = new ArrayList<PasiveMont>();
+        List<PasiveAmount> pasiveAmountListFlux = new ArrayList<PasiveAmount>();
         for (String account : accounts) {
-            PasiveMont pasive = new PasiveMont();
+            PasiveAmount pasive = new PasiveAmount();
             pasive.setIdPasive(account);
-            pasiveMontListFlux.add(pasive);
+            pasiveAmountListFlux.add(pasive);
         }
-        Flux<PasiveMont> pasiveMontFlux = Flux.fromIterable(pasiveMontListFlux) ;
+        Flux<PasiveAmount> pasiveAmountFlux = Flux.fromIterable(pasiveAmountListFlux) ;
 
-        return pasiveMontFlux.flatMap(p ->{
-            return findPasiveMont(p.getIdPasive()).flatMap(f ->{
-                p.setMont(f.getData().getMont());
+        return pasiveAmountFlux.flatMap(p ->{
+            return findPasiveAmount(p.getIdPasive()).flatMap(f ->{
+                p.setAmount(f.getData().getAmount());
                 return Mono.just(p);
             });
         });
@@ -57,10 +57,10 @@ public class PasiveMontServiceImpl implements PasiveMontService {
 
 
     @Override
-    public Mono<PasiveMont> validPasiveMont(List<String> accounts, long amount) {
+    public Mono<PasiveAmount> validPasiveAmount(List<String> accounts, long amount) {
         log.info("Accounts : " + accounts.toString());
-        return listPasiveMont(accounts)
-                .filter(f -> f.getMont()>amount).next();
+        return listPasiveAmount(accounts)
+                .filter(f -> f.getAmount()>amount).next();
 
     }
 
@@ -68,19 +68,19 @@ public class PasiveMontServiceImpl implements PasiveMontService {
 
 /*
     @Override
-    public Mono<PasiveMont> validPasiveMont(List<String> accounts, long amount){
+    public Mono<PasiveAmount> validPasiveAmount(List<String> accounts, long amount){
         log.info("Accounts : " + accounts.toString());
-        PasiveMont pasiveMontsValid = new PasiveMont();
+        PasiveAmount pasiveAmountsValid = new PasiveAmount();
         AtomicBoolean found = new AtomicBoolean(false);
-        return Mono.just(pasiveMontsValid).flatMap(z ->{
+        return Mono.just(pasiveAmountsValid).flatMap(z ->{
            accounts.forEach(x ->{
-                  findPasiveMont(x).flatMap(y -> {
-                    log.info("Monto " +y.getData().getMont());
-                    if (y.getData().getMont() > amount && !found.get()){
+                  findPasiveAmount(x).flatMap(y -> {
+                    log.info("Amounto " +y.getData().getAmount());
+                    if (y.getData().getAmount() > amount && !found.get()){
                         log.info("validacion iompleta");
 
                         z.setIdPasive(y.getData().getIdPasive());
-                        z.setMont(y.getData().getMont());
+                        z.setAmount(y.getData().getAmount());
                         log.info("validacion incompleta");
 
                         found.set(true);

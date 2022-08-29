@@ -1,14 +1,14 @@
 package com.bank.msdebitcardtransaction.services;
 
-import com.bank.msdebitcardtransaction.models.utils.PasiveMont;
-import com.bank.msdebitcardtransaction.models.utils.ResponsePasiveMont;
+import com.bank.msdebitcardtransaction.models.utils.PasiveAmount;
+import com.bank.msdebitcardtransaction.models.utils.ResponsePasiveAmount;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-public interface PasiveMontService {
-    Mono<ResponsePasiveMont> findPasiveMont(String id);
-    Flux<PasiveMont> listPasiveMont(List<String> accounts);
-    Mono<PasiveMont> validPasiveMont(List<String> accounts, long amount);
+public interface PasiveAmountService {
+    Mono<ResponsePasiveAmount> findPasiveAmount(String id);
+    Flux<PasiveAmount> listPasiveAmount(List<String> accounts);
+    Mono<PasiveAmount> validPasiveAmount(List<String> accounts, long amount);
 }

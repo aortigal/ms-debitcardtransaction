@@ -3,7 +3,7 @@ package com.bank.msdebitcardtransaction.models.utils;
 import lombok.Data;
 
 @Data
-public class PasiveMont {
+public class PasiveAmount {
     private String idPasive;
-    private long mont;
+    private long amount;
 }

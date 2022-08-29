@@ -4,12 +4,12 @@ import com.bank.msdebitcardtransaction.handler.ResponseHandler;
 import com.bank.msdebitcardtransaction.models.dao.DebitCardTransactionDao;
 import com.bank.msdebitcardtransaction.models.documents.DebitCardTransaction;
 import com.bank.msdebitcardtransaction.models.utils.Movement;
-import com.bank.msdebitcardtransaction.models.utils.PasiveMont;
+import com.bank.msdebitcardtransaction.models.utils.PasiveAmount;
 import com.bank.msdebitcardtransaction.models.utils.ResponseMovement;
 import com.bank.msdebitcardtransaction.services.DebitCardTransactionService;
 import com.bank.msdebitcardtransaction.services.DebitCardService;
 import com.bank.msdebitcardtransaction.services.MovementService;
-import com.bank.msdebitcardtransaction.services.PasiveMontService;
+import com.bank.msdebitcardtransaction.services.PasiveAmountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class DebitCardTransactionServiceImpl implements DebitCardTransactionServ
     @Autowired
     private MovementService movementService;
     @Autowired
-    private PasiveMontService pasiveMontService;
+    private PasiveAmountService pasiveAmountService;
 
     private static final Logger log = LoggerFactory.getLogger(DebitCardTransactionServiceImpl.class);
 
@@ -109,12 +109,12 @@ public class DebitCardTransactionServiceImpl implements DebitCardTransactionServ
             if (x.getData().getAccounts().stream().count() == 0){
                 return Mono.just(new ResponseHandler("Not found", HttpStatus.NOT_FOUND, null));
             }
-            return pasiveMontService.validPasiveMont(x.getData().getAccounts(), d.getAmount())
+            return pasiveAmountService.validPasiveAmount(x.getData().getAccounts(), d.getAmount())
                     .flatMap(y -> {
                         log.info("Account " + y.toString());
                         Movement movement = new Movement();
                         movement.setClientId(x.getData().getClientId());
-                        movement.setMont(d.getAmount());
+                        movement.setAmount(d.getAmount());
                         movement.setTypeMovement("0");
                         movement.setPasiveId(y.getIdPasive());
                         log.info(movement.toString());
