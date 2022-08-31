@@ -3,19 +3,15 @@ package com.bank.msdebitcardtransaction.services.impl;
 import com.bank.msdebitcardtransaction.models.utils.PasiveAmount;
 import com.bank.msdebitcardtransaction.models.utils.ResponsePasiveAmount;
 import com.bank.msdebitcardtransaction.services.PasiveAmountService;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class PasiveAmountServiceImpl implements PasiveAmountService {
